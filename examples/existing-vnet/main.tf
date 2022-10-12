@@ -61,8 +61,8 @@ module "bastion" {
       }
 
       vnet = {
-        name   = lookup(module.network.vnets.bastion, "name", null)
-        rgname = lookup(module.network.vnets.bastion, "resource_group_name", null)
+        name   = lookup(module.network.vnets.demo, "name", null)
+        rgname = lookup(module.network.vnets.demo, "resource_group_name", null)
       }
     }
   }
