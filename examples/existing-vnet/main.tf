@@ -2,32 +2,69 @@ provider "azurerm" {
   features {}
 }
 
-module "network" {
-  source = "github.com/aztfmods/module-azurerm-vnet"
-  vnets = {
-    bastion = {
-      cidr          = ["10.19.0.0/16"]
-      location      = "eastus2"
-      resourcegroup = "rg-network-eus2"
+locals {
+  naming = {
+    company = "cn"
+    env     = "p"
+    region  = "weu"
+  }
+}
+
+module "global" {
+  source = "github.com/aztfmods/module-azurerm-global"
+  rgs = {
+    network = {
+      name     = "rg-${local.naming.company}-bastion-${local.naming.env}-${local.naming.region}"
+      location = "westeurope"
     }
   }
 }
 
+module "network" {
+  source = "github.com/aztfmods/module-azurerm-vnet"
+
+  naming = {
+    company = local.naming.company
+    env     = local.naming.env
+    region  = local.naming.region
+  }
+
+  vnets = {
+    demo = {
+      cidr          = ["10.19.0.0/16"]
+      location      = module.global.groups.network.location
+      resourcegroup = module.global.groups.network.name
+    }
+  }
+  depends_on = [module.global]
+}
+
 module "bastion" {
-  source     = "../../"
-  depends_on = [module.network]
+  source = "../../"
+
+  naming = {
+    company = local.naming.company
+    env     = local.naming.env
+    region  = local.naming.region
+  }
+
   bastion = {
-    host1 = {
-      resourcegroup         = "rg-bastion-dev"
-      location              = "eastus2"
+    demo = {
+      location              = module.global.groups.network.location
+      resourcegroup         = module.global.groups.network.name
       subnet_address_prefix = ["10.19.0.0/27"]
-      enable_copy_paste     = false
-      enable_file_copy      = false
-      enable_tunneling      = false
-      existing = {
-        vnetname = lookup(module.network.vnets.bastion, "name", null)
-        rgname   = lookup(module.network.vnets.bastion, "resource_group_name", null)
+
+      enable = {
+        copy_paste = false
+        file_copy  = false
+        tunneling  = false
+      }
+
+      vnet = {
+        name   = lookup(module.network.vnets.bastion, "name", null)
+        rgname = lookup(module.network.vnets.bastion, "resource_group_name", null)
       }
     }
   }
+  depends_on = [module.network]
 }
