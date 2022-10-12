@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.0](https://github.com/aztfmods/module-azurerm-bastion/compare/v1.0.0...v1.1.0) (2022-10-12)
+
+
+### Features
+
+* add consistent naming ([#7](https://github.com/aztfmods/module-azurerm-bastion/issues/7)) ([404cff7](https://github.com/aztfmods/module-azurerm-bastion/commit/404cff72e77bf945ec8a4d27efcfa421bc74ab10))
+* add diagnostic integration ([#8](https://github.com/aztfmods/module-azurerm-bastion/issues/8)) ([7c5f721](https://github.com/aztfmods/module-azurerm-bastion/commit/7c5f7213d2fdc62bdf8109e9bbc0b84a5f977c19))
+* add reusable workflows ([#5](https://github.com/aztfmods/module-azurerm-bastion/issues/5)) ([e5cd45a](https://github.com/aztfmods/module-azurerm-bastion/commit/e5cd45a34e15b240f0f0f7935cf5386092296e7a))
+* update documentation ([#9](https://github.com/aztfmods/module-azurerm-bastion/issues/9)) ([fe01f4f](https://github.com/aztfmods/module-azurerm-bastion/commit/fe01f4fcf39f5d34ee2110e101237d3d1f041916))
+
 ## 1.0.0 (2022-09-16)
 
 
