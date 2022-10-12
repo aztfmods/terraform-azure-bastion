@@ -2,11 +2,10 @@
 # Resourcegroups
 #----------------------------------------------------------------------------------------
 
-resource "azurerm_resource_group" "rg" {
+data "azurerm_resource_group" "rg" {
   for_each = var.bastion
 
-  name     = each.value.resourcegroup
-  location = each.value.location
+  name = each.value.resourcegroup
 }
 
 #----------------------------------------------------------------------------------------
@@ -16,8 +15,8 @@ resource "azurerm_resource_group" "rg" {
 data "azurerm_virtual_network" "vnet" {
   for_each = var.bastion
 
-  name                = each.value.existing.vnetname
-  resource_group_name = each.value.existing.rgname
+  name                = each.value.vnet.name
+  resource_group_name = data.azurerm_resource_group.rg[each.key].name
 }
 
 #----------------------------------------------------------------------------------------
@@ -28,7 +27,7 @@ resource "azurerm_subnet" "sn" {
   for_each = var.bastion
 
   name                 = "AzureBastionSubnet"
-  resource_group_name  = each.value.existing.rgname
+  resource_group_name  = data.azurerm_resource_group.rg[each.key].name
   virtual_network_name = data.azurerm_virtual_network.vnet[each.key].name
   address_prefixes     = each.value.subnet_address_prefix
 }
@@ -40,9 +39,9 @@ resource "azurerm_subnet" "sn" {
 resource "azurerm_public_ip" "pip" {
   for_each = var.bastion
 
-  name                = "pip-${each.key}-${each.value.location}"
-  location            = each.value.location
-  resource_group_name = azurerm_resource_group.rg[each.key].name
+  name                = "pip-${var.naming.company}-${each.key}-${var.naming.env}-${var.naming.region}"
+  resource_group_name = data.azurerm_resource_group.rg[each.key].name
+  location            = data.azurerm_resource_group.rg[each.key].location
   allocation_method   = "Static"
   sku                 = "Standard"
   zones               = [1, 2, 3]
@@ -55,12 +54,12 @@ resource "azurerm_public_ip" "pip" {
 resource "azurerm_bastion_host" "bastion" {
   for_each = var.bastion
 
-  name                = "bas-${each.key}-${each.value.location}"
-  location            = each.value.location
-  resource_group_name = azurerm_resource_group.rg[each.key].name
-  copy_paste_enabled  = each.value.enable_copy_paste
-  file_copy_enabled   = each.value.enable_file_copy
-  tunneling_enabled   = each.value.enable_tunneling
+  name                = "bas-${var.naming.company}-${each.key}-${var.naming.env}-${var.naming.region}"
+  resource_group_name = data.azurerm_resource_group.rg[each.key].name
+  location            = data.azurerm_resource_group.rg[each.key].location
+  copy_paste_enabled  = each.value.enable.copy_paste
+  file_copy_enabled   = each.value.enable.file_copy
+  tunneling_enabled   = each.value.enable.tunneling
 
   ip_configuration {
     name                 = "configuration"
@@ -76,9 +75,9 @@ resource "azurerm_bastion_host" "bastion" {
 resource "azurerm_network_security_group" "nsg" {
   for_each = var.bastion
 
-  name                = "nsg-${each.key}-${each.value.location}"
-  resource_group_name = azurerm_resource_group.rg[each.key].name
-  location            = each.value.location
+  name                = "nsg-${var.naming.company}-${each.key}-${var.naming.env}-${var.naming.region}"
+  resource_group_name = data.azurerm_resource_group.rg[each.key].name
+  location            = data.azurerm_resource_group.rg[each.key].location
 
   dynamic "security_rule" {
     for_each = local.rules

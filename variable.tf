@@ -1,4 +1,2 @@
 variable "bastion" {}
-variable "env" {
-  default = "dev"
-}
+variable "naming" {}
