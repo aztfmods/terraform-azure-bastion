@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/aztfmods/module-azurerm-bastion/compare/v1.1.0...v1.2.0) (2022-10-15)
+
+
+### Features
+
+* add more optional arguments ([#10](https://github.com/aztfmods/module-azurerm-bastion/issues/10)) ([a4ff5ee](https://github.com/aztfmods/module-azurerm-bastion/commit/a4ff5ee078fa19b6a05f4e4506b2cd274d03011e))
+
 ## [1.1.0](https://github.com/aztfmods/module-azurerm-bastion/compare/v1.0.0...v1.1.0) (2022-10-12)
 
 
