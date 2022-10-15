@@ -1,4 +1,4 @@
-![example workflow](https://github.com/aztfmods/module-azurerm-vnet/actions/workflows/validate.yml/badge.svg)
+![example workflow](https://github.com/aztfmods/module-azurerm-bastion/actions/workflows/validate.yml/badge.svg)
 
 # Bastion Hosts
 
@@ -8,8 +8,9 @@ The below features are made available:
 
 - multiple bastion hosts
 - predefined network security group and rules
-- terratest is used to validate different integrations in [examples](examples)
+- [terratest](https://terratest.gruntwork.io) is used to validate different integrations
 - [diagnostic](examples/diagnostic-settings/main.tf) logs integration
+- [virtual network](./examples/existing-vnet/main.tf) integration
 
 The below examples shows the usage when consuming the module:
 
@@ -96,7 +97,7 @@ module "bastion" {
 | Name | Description |
 | :-- | :-- |
 | `bastion_hosts` | contains all bastion hosts |
-| `merged_ids` | contains all resource id's specified within the object |
+| `merged_ids` | contains all resource id's specified within the module |
 
 ## Authors
 
@@ -104,4 +105,4 @@ Module is maintained by [Dennis Kool](https://github.com/dkooll) with help from 
 
 ## License
 
-MIT Licensed. See [LICENSE](https://github.com/aztfmods/module-azurerm-vnet/blob/main/LICENSE) for full details.
+MIT Licensed. See [LICENSE](https://github.com/aztfmods/module-azurerm-bastion/blob/main/LICENSE) for full details.
