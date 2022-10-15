@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------------------
-# Resourcegroups
+# resourcegroups
 #----------------------------------------------------------------------------------------
 
 data "azurerm_resource_group" "rg" {
@@ -9,7 +9,7 @@ data "azurerm_resource_group" "rg" {
 }
 
 #----------------------------------------------------------------------------------------
-# Existing vnet
+# existing vnets
 #----------------------------------------------------------------------------------------
 
 data "azurerm_virtual_network" "vnet" {
@@ -20,7 +20,7 @@ data "azurerm_virtual_network" "vnet" {
 }
 
 #----------------------------------------------------------------------------------------
-# Subnet
+# subnets
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_subnet" "sn" {
@@ -33,7 +33,7 @@ resource "azurerm_subnet" "sn" {
 }
 
 #----------------------------------------------------------------------------------------
-# Public ip
+# public ip's
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_public_ip" "pip" {
@@ -48,7 +48,7 @@ resource "azurerm_public_ip" "pip" {
 }
 
 #----------------------------------------------------------------------------------------
-# Bastion
+# bastion hosts
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_bastion_host" "bastion" {
@@ -57,9 +57,13 @@ resource "azurerm_bastion_host" "bastion" {
   name                = "bas-${var.naming.company}-${each.key}-${var.naming.env}-${var.naming.region}"
   resource_group_name = data.azurerm_resource_group.rg[each.key].name
   location            = data.azurerm_resource_group.rg[each.key].location
-  copy_paste_enabled  = each.value.enable.copy_paste
-  file_copy_enabled   = each.value.enable.file_copy
-  tunneling_enabled   = each.value.enable.tunneling
+
+  scale_units            = try(each.value.scale_units, 2)
+  copy_paste_enabled     = try(each.value.enable.copy_paste, false)
+  file_copy_enabled      = try(each.value.enable.file_copy, false)
+  tunneling_enabled      = try(each.value.enable.tunneling, false)
+  ip_connect_enabled     = try(each.value.enable.ip_connect, false)
+  shareable_link_enabled = try(each.value.enable.shareable_link, false)
 
   ip_configuration {
     name                 = "configuration"
@@ -69,7 +73,7 @@ resource "azurerm_bastion_host" "bastion" {
 }
 
 #----------------------------------------------------------------------------------------
-# Nsg's
+# nsg's
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_network_security_group" "nsg" {
@@ -102,7 +106,7 @@ resource "azurerm_network_security_group" "nsg" {
 }
 
 #----------------------------------------------------------------------------------------
-# Nsg subnet associations
+# nsg subnet associations
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_subnet_network_security_group_association" "nsg_as" {
