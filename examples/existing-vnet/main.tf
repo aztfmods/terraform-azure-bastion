@@ -53,11 +53,11 @@ module "bastion" {
       location              = module.global.groups.network.location
       resourcegroup         = module.global.groups.network.name
       subnet_address_prefix = ["10.19.0.0/27"]
+      scale_units           = 2
 
       enable = {
         copy_paste = false
         file_copy  = false
-        tunneling  = false
       }
 
       vnet = {
