@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/aztfmods/module-azurerm-bastion/compare/v1.2.0...v1.3.0) (2022-10-25)
+
+
+### Features
+
+* add sku related conditional expressions ([#12](https://github.com/aztfmods/module-azurerm-bastion/issues/12)) ([5b7ad1c](https://github.com/aztfmods/module-azurerm-bastion/commit/5b7ad1c553f6e78e8c567dc68113b62050534445))
+
 ## [1.2.0](https://github.com/aztfmods/module-azurerm-bastion/compare/v1.1.0...v1.2.0) (2022-10-15)
 
 
