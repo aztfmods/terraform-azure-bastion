@@ -58,12 +58,13 @@ resource "azurerm_bastion_host" "bastion" {
   resource_group_name = data.azurerm_resource_group.rg[each.key].name
   location            = data.azurerm_resource_group.rg[each.key].location
 
+  sku                    = try(each.value.sku, "Basic")
   scale_units            = try(each.value.scale_units, 2)
   copy_paste_enabled     = try(each.value.enable.copy_paste, false)
-  file_copy_enabled      = try(each.value.enable.file_copy, false)
-  tunneling_enabled      = try(each.value.enable.tunneling, false)
-  ip_connect_enabled     = try(each.value.enable.ip_connect, false)
-  shareable_link_enabled = try(each.value.enable.shareable_link, false)
+  file_copy_enabled      = try(each.value.enable.file_copy, false) && each.value.sku != "Basic"
+  tunneling_enabled      = try(each.value.enable.tunneling, false) && each.value.sku != "Basic"
+  ip_connect_enabled     = try(each.value.enable.ip_connect, false) && each.value.sku != "Basic"
+  shareable_link_enabled = try(each.value.enable.shareable_link, false) && each.value.sku != "Basic"
 
   ip_configuration {
     name                 = "configuration"
