@@ -58,7 +58,7 @@ module "bastion" {
 
       enable = {
         copy_paste = false
-        file_copy = false
+        file_copy  = false
         ip_connect = true
       }
 
