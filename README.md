@@ -1,66 +1,41 @@
-![example workflow](https://github.com/aztfmods/module-azurerm-bastion/actions/workflows/validate.yml/badge.svg)
+# Bastion Host
 
-# Bastion Hosts
-
-Terraform module which creates bastion hosts on Azure.
+This Terraform module simplifies the creation of a secure bastion host for remote access to private instances within a network, with configurable options for security groups, instance type, and key pair authentication.
 
 The below features are made available:
 
-- multiple bastion hosts
 - predefined network security group and rules
-- [terratest](https://terratest.gruntwork.io) is used to validate different integrations
-- [diagnostic](examples/diagnostic-settings/main.tf) logs integration
-- [virtual network](./examples/existing-vnet/main.tf) integration
+- existing virtual network usage
+- terratest is used to validate different integrations
 
 The below examples shows the usage when consuming the module:
 
-## Usage: single bastion host existing vnet
+## Usage: simple
 
 ```hcl
-module "network" {
-  source = "github.com/aztfmods/module-azurerm-vnet"
-
-  naming = {
-    company = local.naming.company
-    env     = local.naming.env
-    region  = local.naming.region
-  }
-
-  vnets = {
-    demo = {
-      cidr          = ["10.19.0.0/16"]
-      location      = module.global.groups.network.location
-      resourcegroup = module.global.groups.network.name
-    }
-  }
-  depends_on = [module.global]
-}
-
 module "bastion" {
   source = "../../"
 
-  naming = {
-    company = local.naming.company
-    env     = local.naming.env
-    region  = local.naming.region
-  }
+  company = module.global.company
+  env     = module.global.env
+  region  = module.global.region
 
   bastion = {
-    demo = {
-      location              = module.global.groups.network.location
-      resourcegroup         = module.global.groups.network.name
-      subnet_address_prefix = ["10.19.0.0/27"]
+    location              = module.global.groups.demo.location
+    resourcegroup         = module.global.groups.demo.name
+    subnet_address_prefix = ["10.18.0.0/27"]
+    scale_units           = 2
+    sku                   = "Standard"
 
-      enable = {
-        copy_paste = false
-        file_copy  = false
-        tunneling  = false
-      }
+    enable = {
+      copy_paste = false
+      file_copy  = false
+      ip_connect = true
+    }
 
-      vnet = {
-        name   = lookup(module.network.vnets.demo, "name", null)
-        rgname = lookup(module.network.vnets.demo, "resource_group_name", null)
-      }
+    vnet = {
+      name   = module.network.vnet.name
+      rgname = module.network.vnet.resource_group_name
     }
   }
   depends_on = [module.network]
@@ -83,21 +58,21 @@ module "bastion" {
 | Name | Type |
 | :-- | :-- |
 | [azurerm_virtual_network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network) | datasource |
-| [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/1.39.0/docs/data-sources/resource_group) | datasource |
 
 ## Inputs
 
 | Name | Description | Type | Required |
 | :-- | :-- | :-- | :-- |
 | `bastion` | describes bastion related configuration | object | yes |
-| `naming` | contains naming convention | string | yes |
+| `company` | contains the company name used, for naming convention | string | yes |
+| `region` | contains the shortname of the region, used for naming convention | string | yes |
+| `env` | contains shortname of the environment used for naming convention | string | yes |
 
 ## Outputs
 
 | Name | Description |
 | :-- | :-- |
-| `bastion_hosts` | contains all bastion hosts |
-| `merged_ids` | contains all resource id's specified within the module |
+| `bastion` | contains all bastion related configuration |
 
 ## Authors
 

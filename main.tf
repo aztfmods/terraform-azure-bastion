@@ -1,88 +1,68 @@
 #----------------------------------------------------------------------------------------
-# resourcegroups
-#----------------------------------------------------------------------------------------
-
-data "azurerm_resource_group" "rg" {
-  for_each = var.bastion
-
-  name = each.value.resourcegroup
-}
-
-#----------------------------------------------------------------------------------------
-# existing vnets
+# virtual network
 #----------------------------------------------------------------------------------------
 
 data "azurerm_virtual_network" "vnet" {
-  for_each = var.bastion
-
-  name                = each.value.vnet.name
-  resource_group_name = data.azurerm_resource_group.rg[each.key].name
+  name                = var.bastion.vnet.name
+  resource_group_name = var.bastion.vnet.rgname
 }
 
 #----------------------------------------------------------------------------------------
-# subnets
+# subnet
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_subnet" "sn" {
-  for_each = var.bastion
-
   name                 = "AzureBastionSubnet"
-  resource_group_name  = data.azurerm_resource_group.rg[each.key].name
-  virtual_network_name = data.azurerm_virtual_network.vnet[each.key].name
-  address_prefixes     = each.value.subnet_address_prefix
+  resource_group_name  = data.azurerm_virtual_network.vnet.resource_group_name
+  virtual_network_name = data.azurerm_virtual_network.vnet.name
+  address_prefixes     = var.bastion.subnet_address_prefix
 }
 
 #----------------------------------------------------------------------------------------
-# public ip's
+# public ip
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_public_ip" "pip" {
-  for_each = var.bastion
-
-  name                = "pip-${var.naming.company}-${each.key}-${var.naming.env}-${var.naming.region}"
-  resource_group_name = data.azurerm_resource_group.rg[each.key].name
-  location            = data.azurerm_resource_group.rg[each.key].location
+  name                = "pip-${var.company}-${var.env}-${var.region}"
+  resource_group_name = var.bastion.resourcegroup
+  location            = var.bastion.location
   allocation_method   = "Static"
   sku                 = "Standard"
   zones               = [1, 2, 3]
 }
 
 #----------------------------------------------------------------------------------------
-# bastion hosts
+# bastion host
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_bastion_host" "bastion" {
-  for_each = var.bastion
+  name                = "bas-${var.company}-${var.env}-${var.region}"
+  resource_group_name = var.bastion.resourcegroup
+  location            = var.bastion.location
 
-  name                = "bas-${var.naming.company}-${each.key}-${var.naming.env}-${var.naming.region}"
-  resource_group_name = data.azurerm_resource_group.rg[each.key].name
-  location            = data.azurerm_resource_group.rg[each.key].location
-
-  sku                    = try(each.value.sku, "Basic")
-  scale_units            = try(each.value.scale_units, 2)
-  copy_paste_enabled     = try(each.value.enable.copy_paste, false)
-  file_copy_enabled      = try(each.value.enable.file_copy, false) && each.value.sku != "Basic"
-  tunneling_enabled      = try(each.value.enable.tunneling, false) && each.value.sku != "Basic"
-  ip_connect_enabled     = try(each.value.enable.ip_connect, false) && each.value.sku != "Basic"
-  shareable_link_enabled = try(each.value.enable.shareable_link, false) && each.value.sku != "Basic"
+  sku                    = try(var.bastion.sku, "Basic")
+  scale_units            = try(var.bastion.scale_units, 2)
+  copy_paste_enabled     = try(var.bastion.enable.copy_paste, false)
+  file_copy_enabled      = try(var.bastion.enable.file_copy, false) && var.bastion.sku != "Basic"
+  tunneling_enabled      = try(var.bastion.enable.tunneling, false) && var.bastion.sku != "Basic"
+  ip_connect_enabled     = try(var.bastion.enable.ip_connect, false) && var.bastion.sku != "Basic"
+  shareable_link_enabled = try(var.bastion.enable.shareable_link, false) && var.bastion.sku != "Basic"
 
   ip_configuration {
     name                 = "configuration"
-    subnet_id            = azurerm_subnet.sn[each.key].id
-    public_ip_address_id = azurerm_public_ip.pip[each.key].id
+    subnet_id            = azurerm_subnet.sn.id
+    public_ip_address_id = azurerm_public_ip.pip.id
   }
 }
 
 #----------------------------------------------------------------------------------------
-# nsg's
+# network security group
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_network_security_group" "nsg" {
-  for_each = var.bastion
-
-  name                = "nsg-${var.naming.company}-${each.key}-${var.naming.env}-${var.naming.region}"
-  resource_group_name = data.azurerm_resource_group.rg[each.key].name
-  location            = data.azurerm_resource_group.rg[each.key].location
+  name                = "nsg-${var.company}-${var.env}-${var.region}"
+  resource_group_name = data.azurerm_virtual_network.vnet.resource_group_name
+  location            = data.azurerm_virtual_network.vnet.location
 
   dynamic "security_rule" {
     for_each = local.rules
@@ -107,12 +87,10 @@ resource "azurerm_network_security_group" "nsg" {
 }
 
 #----------------------------------------------------------------------------------------
-# nsg subnet associations
+# nsg subnet association
 #----------------------------------------------------------------------------------------
 
 resource "azurerm_subnet_network_security_group_association" "nsg_as" {
-  for_each = var.bastion
-
-  subnet_id                 = azurerm_subnet.sn[each.key].id
-  network_security_group_id = azurerm_network_security_group.nsg[each.key].id
+  subnet_id                 = azurerm_subnet.sn.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
 }
