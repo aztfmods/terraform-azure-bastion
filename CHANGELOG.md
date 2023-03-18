@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/aztfmods/module-azurerm-bastion/compare/v1.3.0...v1.4.0) (2023-03-18)
+
+
+### Features
+
+* simplify structure ([#14](https://github.com/aztfmods/module-azurerm-bastion/issues/14)) ([17b86c9](https://github.com/aztfmods/module-azurerm-bastion/commit/17b86c9171e232de09569e7fcac86c5e78715372))
+
 ## [1.3.0](https://github.com/aztfmods/module-azurerm-bastion/compare/v1.2.0...v1.3.0) (2022-10-25)
 
 
