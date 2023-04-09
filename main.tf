@@ -1,16 +1,10 @@
-#----------------------------------------------------------------------------------------
 # virtual network
-#----------------------------------------------------------------------------------------
-
 data "azurerm_virtual_network" "vnet" {
   name                = var.bastion.vnet.name
   resource_group_name = var.bastion.vnet.rgname
 }
 
-#----------------------------------------------------------------------------------------
 # subnet
-#----------------------------------------------------------------------------------------
-
 resource "azurerm_subnet" "sn" {
   name                 = "AzureBastionSubnet"
   resource_group_name  = data.azurerm_virtual_network.vnet.resource_group_name
@@ -18,10 +12,7 @@ resource "azurerm_subnet" "sn" {
   address_prefixes     = var.bastion.subnet_address_prefix
 }
 
-#----------------------------------------------------------------------------------------
 # public ip
-#----------------------------------------------------------------------------------------
-
 resource "azurerm_public_ip" "pip" {
   name                = "pip-${var.company}-${var.env}-${var.region}"
   resource_group_name = var.bastion.resourcegroup
@@ -31,11 +22,7 @@ resource "azurerm_public_ip" "pip" {
   zones               = [1, 2, 3]
 }
 
-#----------------------------------------------------------------------------------------
 # bastion host
-#----------------------------------------------------------------------------------------
-
-resource "azurerm_bastion_host" "bastion" {
   name                = "bas-${var.company}-${var.env}-${var.region}"
   resource_group_name = var.bastion.resourcegroup
   location            = var.bastion.location
@@ -55,10 +42,7 @@ resource "azurerm_bastion_host" "bastion" {
   }
 }
 
-#----------------------------------------------------------------------------------------
 # network security group
-#----------------------------------------------------------------------------------------
-
 resource "azurerm_network_security_group" "nsg" {
   name                = "nsg-${var.company}-${var.env}-${var.region}"
   resource_group_name = data.azurerm_virtual_network.vnet.resource_group_name
@@ -86,10 +70,7 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
-#----------------------------------------------------------------------------------------
 # nsg subnet association
-#----------------------------------------------------------------------------------------
-
 resource "azurerm_subnet_network_security_group_association" "nsg_as" {
   subnet_id                 = azurerm_subnet.sn.id
   network_security_group_id = azurerm_network_security_group.nsg.id
