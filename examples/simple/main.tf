@@ -10,7 +10,7 @@ module "global" {
   region  = "weu"
 
   rgs = {
-    demo    = {location = "westeurope" }
+    demo    = { location = "westeurope" }
     network = { location = "westeurope" }
   }
 }
@@ -57,3 +57,4 @@ module "bastion" {
   }
   depends_on = [module.network]
 }
+
