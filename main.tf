@@ -23,6 +23,7 @@ resource "azurerm_public_ip" "pip" {
 }
 
 # bastion host
+resource "azurerm_bastion_host" "bastion" {
   name                = "bas-${var.company}-${var.env}-${var.region}"
   resource_group_name = var.bastion.resourcegroup
   location            = var.bastion.location
