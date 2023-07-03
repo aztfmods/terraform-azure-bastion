@@ -2,44 +2,44 @@ provider "azurerm" {
   features {}
 }
 
-module "global" {
-  source = "github.com/aztfmods/module-azurerm-global"
+module "rg" {
+  source = "github.com/aztfmods/terraform-azure-rg"
 
-  company = "cn"
-  env     = "p"
-  region  = "weu"
+  environment = var.environment
 
-  rgs = {
-    demo    = { location = "westeurope" }
-    network = { location = "westeurope" }
+  groups = {
+    demo = {
+      region = "westeurope"
+    }
+    network = {
+      region = "westeurope"
+    }
   }
 }
 
 module "network" {
-  source = "github.com/aztfmods/module-azurerm-vnet"
+  source = "github.com/aztfmods/terraform-azure-vnet"
 
-  company = module.global.company
-  env     = module.global.env
-  region  = module.global.region
+  workload    = var.workload
+  environment = var.environment
 
   vnet = {
-    location      = module.global.groups.network.location
-    resourcegroup = module.global.groups.network.name
+    location      = module.rg.groups.network.location
+    resourcegroup = module.rg.groups.network.name
     cidr          = ["10.18.0.0/16"]
   }
-  depends_on = [module.global]
+  depends_on = [module.rg]
 }
 
 module "bastion" {
   source = "../../"
 
-  company = module.global.company
-  env     = module.global.env
-  region  = module.global.region
+  workload    = var.workload
+  environment = var.environment
 
   bastion = {
-    location              = module.global.groups.demo.location
-    resourcegroup         = module.global.groups.demo.name
+    location              = module.rg.groups.demo.location
+    resourcegroup         = module.rg.groups.demo.name
     subnet_address_prefix = ["10.18.0.0/27"]
     scale_units           = 2
     sku                   = "Standard"
