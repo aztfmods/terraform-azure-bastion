@@ -1,3 +1,11 @@
-variable "bastion" {}
-variable "workload" {}
-variable "environment" {}
+variable "bastion" {
+  type = any
+}
+
+variable "workload" {
+  type = string
+}
+
+variable "environment" {
+  type = string
+}

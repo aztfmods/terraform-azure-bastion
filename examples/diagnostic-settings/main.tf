@@ -10,18 +10,8 @@ locals {
   }
 }
 
-module "global" {
-  source = "github.com/aztfmods/module-azurerm-global"
-  rgs = {
-    network = {
-      name     = "rg-${local.naming.company}-netw-${local.naming.env}-${local.naming.region}"
-      location = "westeurope"
-    }
-  }
-}
-
 module "logging" {
-  source = "github.com/aztfmods/module-azurerm-law"
+  source = "github.com/aztfmods/module-azurerm-law?ref=v0.1.0"
 
   naming = {
     company = local.naming.company
@@ -41,7 +31,7 @@ module "logging" {
 }
 
 module "network" {
-  source = "github.com/aztfmods/module-azurerm-vnet"
+  source = "github.com/aztfmods/module-azurerm-vnet?ref=v1.13.0"
 
   naming = {
     company = local.naming.company
@@ -90,7 +80,7 @@ module "bastion" {
 }
 
 module "diagnostic_settings" {
-  source = "github.com/aztfmods/module-azurerm-diags"
+  source = "github.com/aztfmods/module-azurerm-diags?ref=v0.1.0"
   count  = length(module.bastion.merged_ids)
 
   resource_id           = element(module.bastion.merged_ids, count.index)
