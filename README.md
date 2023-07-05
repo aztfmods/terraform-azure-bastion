@@ -14,7 +14,7 @@ A last key goal is to separate logic from configuration in the module, thereby e
 
 ## Features
 
-- includes support for a predefined network security group and rules for easy network security management.
+- includes support for a predefined network security group and rules
 - enables utilization of existing virtual networks
 - utilization of terratest for robust validation.
 
