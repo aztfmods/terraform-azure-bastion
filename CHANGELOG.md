@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.0](https://github.com/aztfmods/terraform-azure-bastion/compare/v1.4.0...v1.5.0) (2023-07-12)
+
+
+### Features
+
+* **deps:** bump github.com/gruntwork-io/terratest in /tests ([#32](https://github.com/aztfmods/terraform-azure-bastion/issues/32)) ([2f659e2](https://github.com/aztfmods/terraform-azure-bastion/commit/2f659e28b9f286005feca2abeea5c90e270f903c))
+* **deps:** bump google.golang.org/grpc from 1.51.0 to 1.53.0 in /tests ([#31](https://github.com/aztfmods/terraform-azure-bastion/issues/31)) ([545f9b5](https://github.com/aztfmods/terraform-azure-bastion/commit/545f9b52fd320b5d63ceed54ea87676bde3908bf))
+* solve linting issues and update documentation([#29](https://github.com/aztfmods/terraform-azure-bastion/issues/29)) ([655852a](https://github.com/aztfmods/terraform-azure-bastion/commit/655852afa4e07a6badd67b25824dc65c722870c6))
+
 ## [1.4.0](https://github.com/aztfmods/module-azurerm-bastion/compare/v1.3.0...v1.4.0) (2023-03-18)
 
 
