@@ -28,7 +28,6 @@ module "network" {
     resourcegroup = module.rg.groups.network.name
     cidr          = ["10.18.0.0/16"]
   }
-  depends_on = [module.rg]
 }
 
 module "bastion" {
@@ -55,6 +54,4 @@ module "bastion" {
       rgname = module.network.vnet.resource_group_name
     }
   }
-  depends_on = [module.network]
 }
-

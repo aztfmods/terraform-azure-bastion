@@ -47,7 +47,6 @@ module "bastion" {
       rgname = module.network.vnet.resource_group_name
     }
   }
-  depends_on = [module.network]
 }
 ```
 
@@ -106,5 +105,6 @@ MIT Licensed. See [LICENSE](https://github.com/aztfmods/terraform-azure-bastion/
 
 ## Reference
 
-- [Bastion Documentation - Microsoft docs](https://learn.microsoft.com/en-us/azure/bastion)
-- [Bastion Rest Api - Microsoft docs](https://learn.microsoft.com/en-us/rest/api/virtualnetwork/bastion-hosts)
+- [Documentation](https://learn.microsoft.com/en-us/azure/bastion)
+- [Rest Api](https://learn.microsoft.com/en-us/rest/api/virtualnetwork/bastion-hosts)
+- [Rest Api Specs](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/network/resource-manager/Microsoft.Network/stable/2023-04-01/bastionHost.json)
